@@ -1,0 +1,7 @@
+{
+  "name": "flappy",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Joe <niemijoe@hotmail.com>",
+  "license": "MIT"
+}
