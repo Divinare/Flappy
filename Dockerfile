@@ -13,7 +13,4 @@ COPY . .
 # Build
 RUN yarn build
 
-# Bundle app source
-
-EXPOSE 8080
 CMD [ "node", "server.js" ]
