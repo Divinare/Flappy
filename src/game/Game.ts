@@ -7,6 +7,7 @@ import constants from '../constants/constants';
 const PIPE_COUNT = 4;
 const PIPE_WIDTH = constants.GAME_WIDTH / 20;
 const PLAYER_WIDTH = PIPE_WIDTH / 2;
+const DISTANCE_BETWEEN_PIPES = constants.GAME_WIDTH / 5;
 const PIPE_SPAWN_X = constants.GAME_WIDTH + PIPE_WIDTH; // initial pipe start position
 
 class Game {
@@ -48,21 +49,28 @@ class Game {
         if (this.pipes[0] && this.pipes[0].x < (0 - PIPE_WIDTH)) {
             this.pipes.shift();
         }
-        if (this.frameCount % 100 === 0) {
+
+        const lastPipe = this.pipes.slice(-1)[0];
+        if (!lastPipe) {
             this.addPipe();
-            this.pipeCount += 1;
+        } else if (lastPipe.x < constants.GAME_WIDTH - DISTANCE_BETWEEN_PIPES) {
+            this.addPipe();
             if (this.pipeCount > 5 && this.pipeCount % 4 === 0) {
                 this.level++;
-                this.pipes.forEach(pipe => pipe.setSpeed(this.level + 1));
+                this.pipes.forEach(pipe => pipe.setSpeed(this.getPipeSpeed()));
             }
         }
-
         this.frameCount++;
     }
 
     private addPipe = () => {
-        const pipe = new Pipe({ x: PIPE_SPAWN_X, width: PIPE_WIDTH, speed: this.level + 1 });
+        const pipe = new Pipe({ x: PIPE_SPAWN_X, width: PIPE_WIDTH, speed: this.getPipeSpeed() });
         this.pipes.push(pipe);
+        this.pipeCount += 1;
+    }
+
+    private getPipeSpeed = () => {
+        return 5 + (this.level * 1.5);
     }
 
     public draw = () => {
