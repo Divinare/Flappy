@@ -4,7 +4,6 @@ import Pipe from './Pipe';
 import '../util/KeyEventHandler';
 import constants from '../constants/constants';
 
-const PIPE_COUNT = 4;
 const PIPE_WIDTH = constants.GAME_WIDTH / 20;
 const PLAYER_WIDTH = PIPE_WIDTH / 2;
 const DISTANCE_BETWEEN_PIPES = constants.GAME_WIDTH / 5;
@@ -13,7 +12,6 @@ const PIPE_SPAWN_X = constants.GAME_WIDTH + PIPE_WIDTH; // initial pipe start po
 class Game {
     private player: Player;
     private pipes: Pipe[];
-    private frameCount: number;
     private isGameOver: boolean;
     private level: number;
     private pipeCount: number;
@@ -25,7 +23,6 @@ class Game {
     private initNewGame = () => {
         this.player = new Player({ x: 100, y: 0, width: PLAYER_WIDTH });
         this.pipes = [];
-        this.frameCount = 0;
         this.level = 1;
         this.pipeCount = 0;
     }
@@ -43,6 +40,7 @@ class Game {
             pipe.update();
             if (pipe.isIntersecting(this.player)) {
                 this.isGameOver = true;
+                this.setHightScore();
             }
         });
         // Remove pipe if its outside of the window
@@ -60,7 +58,17 @@ class Game {
                 this.pipes.forEach(pipe => pipe.setSpeed(this.getPipeSpeed()));
             }
         }
-        this.frameCount++;
+    }
+
+    public draw = () => {
+        Drawer.clearCanvas();
+        this.pipes.forEach(pipe => pipe.draw());
+        this.player.draw();
+        Drawer.drawText(constants.GAME_WIDTH - 150, 25, `Level ${this.level}`, '20px Arial', '#ecf0f1');
+        const highscore = localStorage.getItem('flappy-highscore');
+        if (highscore) {
+            Drawer.drawText(constants.GAME_WIDTH - 150, 50, `Highscore ${highscore}`, '20px Arial', '#ecf0f1');
+        }
     }
 
     private addPipe = () => {
@@ -73,13 +81,14 @@ class Game {
         return 5 + (this.level * 1.5);
     }
 
-    public draw = () => {
-        Drawer.clearCanvas();
-        this.pipes.forEach(pipe => pipe.draw());
-        this.player.draw();
-        Drawer.drawText(constants.GAME_WIDTH - 100, 25, `Level ${this.level}`, '20px Arial', '#ecf0f1');
+    private setHightScore = () => {
+        const oldHighscore = localStorage.getItem('flappy-highscore');
+        if (!oldHighscore) {
+            localStorage.setItem('flappy-highscore', '' + this.level);
+        } else if (parseInt(oldHighscore) < this.level) {
+            localStorage.setItem('flappy-highscore', '' + this.level);
+        }
     }
-
 }
 
 export default Game;
