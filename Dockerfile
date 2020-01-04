@@ -14,3 +14,4 @@ COPY . .
 RUN yarn build
 
 CMD [ "node", "server.js" ]
+
