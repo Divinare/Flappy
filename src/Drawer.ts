@@ -1,4 +1,7 @@
-import * as DrawUtils from './util/drawUtils';
+import Dimensions from './game/Dimensions'
+import * as DrawUtils from './util/drawUtils'
+
+const dimensions = Dimensions.getInstance()
 
 class Drawer {
     public fillRect = (
@@ -8,23 +11,40 @@ class Drawer {
         height: number, // rectangle height
         color: string
     ) => {
-        const ctx = DrawUtils.getContext();
-        ctx.fillStyle = color;
-        ctx.fillRect(x1, y1, width, height);
-    };
+        const ctx = DrawUtils.getContext()
+        ctx.fillStyle = color
 
-    public drawText = (x: number, y: number, text: string, font: string, color: string) => {
-        const ctx = DrawUtils.getContext();
-        ctx.fillStyle = color;
-        ctx.font = font;
-        ctx.fillText(text, x, y);
-    };
+        // Translate game the center of the screen
+        let yMargin = (window.innerHeight - dimensions.getGameHeight()) / 2
+        let xMargin = (window.innerWidth - dimensions.getGameWidth()) / 2
+
+        ctx.fillRect(x1 + xMargin, y1 + yMargin, width, height)
+    }
+
+    public drawBackground = (color: string) => {
+        let gameWidth = dimensions.getGameWidth()
+        let gameHeight = dimensions.getGameHeight()
+        this.fillRect(0, 0, gameWidth, gameHeight, color)
+    }
+
+    public drawText = (
+        x: number,
+        y: number,
+        text: string,
+        font: string,
+        color: string
+    ) => {
+        const ctx = DrawUtils.getContext()
+        ctx.fillStyle = color
+        ctx.font = font
+        ctx.fillText(text, x, y)
+    }
 
     public clearCanvas = () => {
-        const ctx = DrawUtils.getContext();
-        const canvas = DrawUtils.getCanvas();
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-    };
+        const ctx = DrawUtils.getContext()
+        const canvas = DrawUtils.getCanvas()
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+    }
 }
 
-export default new Drawer();
+export default new Drawer()

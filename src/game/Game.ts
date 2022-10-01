@@ -2,12 +2,9 @@ import Drawer from '../Drawer'
 import Player from './Player'
 import Pipe from './Pipe'
 import '../util/KeyEventHandler'
-import constants from '../constants/constants'
+import Dimensions from './Dimensions'
 
-const PIPE_WIDTH = constants.GAME_WIDTH / 20
-const PLAYER_WIDTH = PIPE_WIDTH / 2
-const DISTANCE_BETWEEN_PIPES = constants.GAME_WIDTH / 5
-const PIPE_SPAWN_X = constants.GAME_WIDTH + PIPE_WIDTH // initial pipe start position
+const dimensions = Dimensions.getInstance()
 
 class Game {
     private player: Player
@@ -15,13 +12,19 @@ class Game {
     private isGameOver: boolean
     private level: number
     private pipeCount: number
+
     constructor() {
         this.isGameOver = false
+        dimensions.initDimensions()
         this.initNewGame()
+        this.updateDimensions()
     }
 
     private initNewGame = () => {
-        this.player = new Player({ x: 100, y: 0, width: PLAYER_WIDTH })
+        this.player = new Player({
+            x: dimensions.getPlayerWidth(),
+            y: 0,
+        })
         this.pipes = []
         this.level = 1
         this.pipeCount = 0
@@ -44,28 +47,45 @@ class Game {
             }
         })
         // Remove pipe if its outside of the window
-        if (this.pipes[0] && this.pipes[0].x < 0 - PIPE_WIDTH) {
+        let xMargin = (window.innerWidth - dimensions.getGameWidth()) / 2
+        if (
+            this.pipes[0] &&
+            this.pipes[0].x < -xMargin - dimensions.getPipeWidth()
+        ) {
             this.pipes.shift()
         }
 
         const lastPipe = this.pipes.slice(-1)[0]
         if (!lastPipe) {
             this.addPipe()
-        } else if (lastPipe.x < constants.GAME_WIDTH - DISTANCE_BETWEEN_PIPES) {
+        } else if (
+            lastPipe.x + xMargin <
+            dimensions.getGameWidth() - dimensions.getDistanceBetweenPipes()
+        ) {
             this.addPipe()
-            if (this.pipeCount > 5 && this.pipeCount % 4 === 0) {
+            if (this.pipeCount > 4 && this.pipeCount % 3 === 0) {
                 this.level++
                 this.pipes.forEach(pipe => pipe.setSpeed(this.getPipeSpeed()))
             }
         }
     }
 
+    public updateDimensions = () => {
+        dimensions.updateDimensions()
+        this.player.updateDimensions()
+        this.pipes.forEach(pipe => {
+            pipe.updateDimensions()
+        })
+        this.draw()
+    }
+
     public draw = () => {
         Drawer.clearCanvas()
+        Drawer.drawBackground('#001d26')
         this.pipes.forEach(pipe => pipe.draw())
         this.player.draw()
         Drawer.drawText(
-            constants.GAME_WIDTH - 150,
+            dimensions.getGameWidth() - 150,
             25,
             `Level ${this.level}`,
             '20px Arial',
@@ -74,7 +94,7 @@ class Game {
         const highscore = localStorage.getItem('flappy-highscore')
         if (highscore) {
             Drawer.drawText(
-                constants.GAME_WIDTH - 150,
+                dimensions.getGameWidth() - 150,
                 50,
                 `Highscore ${highscore}`,
                 '20px Arial',
@@ -85,8 +105,7 @@ class Game {
 
     private addPipe = () => {
         const pipe = new Pipe({
-            x: PIPE_SPAWN_X,
-            width: PIPE_WIDTH,
+            x: dimensions.getInitialPipeSpawnXPosition(),
             speed: this.getPipeSpeed(),
         })
         this.pipes.push(pipe)
@@ -94,7 +113,7 @@ class Game {
     }
 
     private getPipeSpeed = () => {
-        return 5 + this.level * 1.5
+        return dimensions.getGameWidth() / 200 + this.level * 1.25
     }
 
     private setHightScore = () => {

@@ -4,8 +4,6 @@ const commonConstants = {
         PLAYER_COLOR: '#3498db',
         PIPE_COLOR: '#16a085',
     },
-    GAME_HEIGHT: window.innerHeight,
-    GAME_WIDTH: window.innerWidth,
 }
 
 const developmentConstants = {

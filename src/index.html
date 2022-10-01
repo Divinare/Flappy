@@ -1,38 +1,40 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <title>Flappy</title>
+        <meta
+            meta
+            name="viewport"
+            content="width=device-width, user-scalable=no"
+        />
+    </head>
+    <style>
+        * {
+            box-sizing: border-box;
+            overflow: hidden;
+        }
 
-<head>
-    <title>Flappy</title>
-    <meta meta name="viewport" content="width=device-width, user-scalable=no" />
-</head>
-<style>
-    * {
-        box-sizing: border-box;
-        overflow: hidden;
-    }
+        body {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
 
-    body {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        margin: 0;
-    }
+        #app {
+            width: 100%;
+            height: 100%;
+        }
 
-    #app {
-        width: 100%;
-        height: 100%;
-    }
+        #gameCanvas {
+            background-color: #00141a;
+        }
+    </style>
+    <noscript>Your browser does not support JavaScript</noscript>
 
-    #gameCanvas {
-        background-color: #171717;
-    }
-</style>
-<noscript>Your browser does not support JavaScript</noscript>
-
-<body>
-    <div id="app">
-        <canvas id='gameCanvas' />
-    </div>
-</body>
-
+    <body>
+        <div id="app">
+            <canvas id="gameCanvas" />
+        </div>
+    </body>
 </html>

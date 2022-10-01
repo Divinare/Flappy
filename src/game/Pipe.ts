@@ -1,11 +1,12 @@
 import Drawer from '../Drawer'
 import constants from '../constants/constants'
 import Player from './Player'
+import Dimensions from './Dimensions'
+import { DrawableClass } from './Types'
 
-const HOLE_SIZE = constants.GAME_HEIGHT / 3
+const dimensions = Dimensions.getInstance()
 
 interface PipeProps {
-    width: number
     x: number
     speed: number
 }
@@ -17,7 +18,7 @@ interface Rectangle {
     right: number
 }
 
-class Pipe {
+class Pipe implements DrawableClass {
     public x: number
     private width: number
     private topPartY: number
@@ -26,10 +27,13 @@ class Pipe {
 
     constructor(props: PipeProps) {
         this.x = props.x
-        this.width = props.width // 10 - 480
-        this.topPartY = Math.random() * (constants.GAME_HEIGHT - HOLE_SIZE) - 20 // 20 = buffer
-        this.bottomPartY = this.topPartY + HOLE_SIZE
+        this.topPartY =
+            Math.random() *
+                (dimensions.getGameHeight() - dimensions.getHoleSize()) -
+            20 // 20 = buffer
+        this.bottomPartY = this.topPartY + dimensions.getHoleSize()
         this.speed = props.speed
+        this.updateDimensions()
     }
 
     public isIntersecting = (player: Player) => {
@@ -48,7 +52,7 @@ class Pipe {
         const bottomPartRectangle: Rectangle = {
             left: this.x,
             top: this.bottomPartY,
-            bottom: constants.GAME_HEIGHT,
+            bottom: dimensions.getGameHeight() + this.bottomPartY,
             right: this.x + this.width,
         }
         if (
@@ -86,13 +90,17 @@ class Pipe {
             this.x,
             this.bottomPartY,
             this.width,
-            constants.GAME_HEIGHT,
+            dimensions.getGameHeight() - this.bottomPartY,
             constants.COLORS.PIPE_COLOR
         )
     }
 
     public setSpeed = (speed: number) => {
         this.speed = speed
+    }
+
+    public updateDimensions = () => {
+        this.width = dimensions.getPipeWidth()
     }
 }
 
