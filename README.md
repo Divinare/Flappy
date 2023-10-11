@@ -1,12 +1,20 @@
 Flappy bird copy
 ================
 
-Install dependencies with
-````
+## Project setup
+
+### Install dependencies
+```
 yarn
 ```
 
-Start with
+### Start the project
 ```
 yarn start
+```
+And then navigate to *http://localhost:8080*
+
+## Build for production
+```
+./bin/build-image.sh
 ```
